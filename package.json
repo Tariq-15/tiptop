@@ -1,0 +1,11 @@
+{
+  "name": "tiptop-storefront",
+  "private": true,
+  "description": "Static HTML storefront (TipTop). Next.js lives only in drive-proxy/ for local image proxy.",
+  "scripts": {
+    "build": "node -e \"process.exit(0)\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
