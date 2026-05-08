@@ -358,7 +358,7 @@
       "</div>" +
       '<button type="button" class="add-cart-btn" data-product-id="' +
       p.id +
-      '">কার্টে যোগ করুন</button>' +
+      '">Order Now</button>' +
       "</div>" +
       "</div>" +
       "</div>"
@@ -517,6 +517,10 @@
     rebuild();
   }
 
+  function openMessengerOrder() {
+    window.open(MESSENGER_BASE, "_blank", "noopener,noreferrer");
+  }
+
   function bindProductInteractions(grid) {
     grid.addEventListener("change", function (e) {
       var sel = e.target.closest(".variant-select");
@@ -544,14 +548,7 @@
 
       var btn = e.target.closest(".add-cart-btn");
       if (!btn) return;
-      var id = +btn.dataset.productId;
-      var p = findProduct(id);
-      if (!p) return;
-      var variantIndex = 0;
-      var card = btn.closest(".product-card");
-      var s = card.querySelector(".variant-select");
-      if (s) variantIndex = +s.value;
-      addCartLine(id, variantIndex, 1);
+      openMessengerOrder();
     });
   }
 
