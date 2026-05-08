@@ -1,0 +1,321 @@
+/**
+ * Moderator area — blue accent and Copy UI (main storefront uses orange).
+ */
+
+.page-mod {
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.12);
+  --cream: #eef6ff;
+  --border: #cfe0fc;
+  background: var(--cream);
+}
+
+.page-mod .logo-text span {
+  color: var(--accent);
+}
+
+.page-mod .nav-link:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.page-mod .nav-link[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--accent-soft);
+  border-color: rgba(37, 99, 235, 0.28);
+}
+
+.page-mod .page-hero {
+  border-bottom-color: var(--border);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 52%, #60a5fa 100%);
+}
+
+.page-mod .page-hero .breadcrumb a,
+.page-mod .page-hero .breadcrumb {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.page-mod .page-title,
+.page-mod .page-subtitle,
+.page-mod .product-count {
+  color: #fff;
+}
+
+.page-mod .page-subtitle {
+  opacity: 0.92;
+}
+
+/* Product count + SKU range — same pill; 0.35 = dark fill alpha (labels stay readable) */
+.page-mod .page-hero #catalog-count-products.product-count,
+.page-mod .page-hero #catalog-sku-range.product-count {
+  background: rgba(15, 23, 42, 0.35);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f8fafc;
+  opacity: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.page-mod .storefront-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.page-mod .storefront-link:hover {
+  background: var(--accent-soft);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+/* Mod home: category grid (mirrors index layout) */
+.page-mod-home .mod-home-hero {
+  padding: 56px 24px 48px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #93c5fd 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-mod-home .mod-home-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.12) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.page-mod-home .mod-home-inner {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.page-mod-home .mod-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.page-mod-home .mod-home-hero h1 {
+  font-family: var(--font-display, "Parkinsans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.page-mod-home .mod-home-hero p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 400;
+}
+
+.page-mod-home .section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+}
+
+.page-mod-home .section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.page-mod-home .section-title {
+  font-family: var(--font-display, "Parkinsans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--charcoal);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.page-mod-home .category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 36px;
+}
+
+.page-mod-home .category-card {
+  background: var(--warm-white);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s, box-shadow 0.25s;
+  display: block;
+}
+
+.page-mod-home .category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.page-mod-home .category-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: #e8f2ff;
+}
+
+.page-mod-home .category-img-placeholder {
+  width: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.page-mod-home .category-body {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-mod-home .category-name {
+  font-family: var(--font-display, "Parkinsans", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--charcoal);
+}
+
+.page-mod-home .category-count {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.page-mod-home .view-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.page-mod-home footer {
+  background: #172554;
+  color: rgba(255, 255, 255, 0.88);
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.page-mod-home footer a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.page-mod-home footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .page-mod-home .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .page-mod-home .category-grid {
+    grid-template-columns: 1fr;
+  }
+  .page-mod-home .section {
+    padding: 40px 16px 56px;
+  }
+}
+
+.page-mod .footer-simple .footer-messenger-btn.mod-footer-link {
+  background: #2563eb;
+  border: 1px solid #1d4ed8;
+}
+
+.page-mod .footer-simple .footer-messenger-btn.mod-footer-link:hover {
+  background: #1d4ed8;
+}
+
+/* Copy button + toast (catalog-cart.js moderator mode) */
+.mod-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.mod-copy-btn:hover {
+  background: #1d4ed8;
+}
+
+.mod-copy-btn:active {
+  transform: translateY(1px);
+}
+
+.mod-copy-btn-done {
+  background: #16a34a !important;
+}
+
+.mod-copy-icon {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.mod-copy-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(14px);
+  padding: 12px 20px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 10000;
+}
+
+.mod-copy-toast.mod-copy-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

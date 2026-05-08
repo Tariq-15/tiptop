@@ -9,6 +9,10 @@
   var MESSENGER_BASE = "https://m.me/tiptopcc99";
   var PER_PAGE = 16;
 
+  function isModCatalog() {
+    return typeof window !== "undefined" && window.SHOPCRAFT_MOD_CATALOG === true;
+  }
+
   /** If category metadata is missing, map ?c= slug → product category label. */
   var SLUG_FALLBACK_PRODUCT_CATEGORY = {
     "plant-hub": "PLANT HUB",
@@ -73,7 +77,7 @@
     var s = document.getElementById("catalog-page-subtitle");
     if (s && catDef.subtitle != null) s.textContent = catDef.subtitle;
     var dt = catDef.documentTitle || catDef.breadcrumbLabel || catDef.slug || "TipTop";
-    document.title = dt + " — TipTop";
+    document.title = isModCatalog() ? dt + " — TipTop · Mod" : dt + " — TipTop";
   }
 
   function escapeHtml(s) {
@@ -239,6 +243,59 @@
     return productsById.get(Number(id));
   }
 
+  /** Text copied by moderator “Copy” action; prefers DB message_text / order_message. */
+  function productCopyMessage(product, variantIndex) {
+    var raw = String(
+      (product && (product.message_text || product.order_message)) || ""
+    ).trim();
+    if (raw) return raw;
+    var sku = String((product && product.sku) || "").trim();
+    var name = String((product && product.name) || "").trim();
+    var parts = [];
+    if (sku) parts.push(sku);
+    if (name) parts.push(name);
+    if (product && product.variants && product.variants.length) {
+      var v = product.variants[variantIndex] || product.variants[0];
+      if (v && v.label) parts.push(String(v.label).trim());
+    }
+    parts.push("", "অর্ডারটি কনফার্ম করুন");
+    return parts.join("\n");
+  }
+
+  function fallbackCopyText(text, cb) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      cb(document.execCommand("copy"));
+    } catch (err) {
+      cb(false);
+    }
+    document.body.removeChild(ta);
+  }
+
+  function showModCopyToast(msg) {
+    var id = "mod-copy-toast";
+    var el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement("div");
+      el.id = id;
+      el.className = "mod-copy-toast";
+      el.setAttribute("role", "status");
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("mod-copy-toast-visible");
+    clearTimeout(showModCopyToast._t);
+    showModCopyToast._t = setTimeout(function () {
+      el.classList.remove("mod-copy-toast-visible");
+    }, 2200);
+  }
+
   function renderProductCard(p) {
     var hasVariants = p.variants && p.variants.length > 0;
     var imgs = p.images && p.images.length ? p.images : [];
@@ -334,6 +391,16 @@
         "</div>";
     }
 
+    var actionBtn = isModCatalog()
+      ? '<button type="button" class="mod-copy-btn" data-product-id="' +
+        p.id +
+        '" title="Copy message text">' +
+        '<svg class="mod-copy-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>' +
+        "<span>Copy</span></button>"
+      : '<button type="button" class="add-cart-btn" data-product-id="' +
+        p.id +
+        '">Order Now</button>';
+
     return (
       '<div class="product-card" data-product-id="' +
       p.id +
@@ -356,9 +423,7 @@
       '" data-role="price">' +
       priceDisplay(p, 0) +
       "</div>" +
-      '<button type="button" class="add-cart-btn" data-product-id="' +
-      p.id +
-      '">Order Now</button>' +
+      actionBtn +
       "</div>" +
       "</div>" +
       "</div>"
@@ -561,6 +626,41 @@
         return;
       }
 
+      var copyBtn = e.target.closest(".mod-copy-btn");
+      if (copyBtn) {
+        e.preventDefault();
+        var cid = +copyBtn.dataset.productId;
+        var cp = findProduct(cid);
+        if (!cp) return;
+        var cvi = 0;
+        var ccard = copyBtn.closest(".product-card");
+        var cs = ccard ? ccard.querySelector(".variant-select") : null;
+        if (cs) cvi = +cs.value;
+        var ctext = productCopyMessage(cp, cvi);
+        function copied(ok) {
+          showModCopyToast(ok ? "Copied to clipboard" : "Could not copy — try selecting text manually");
+          if (ok) {
+            copyBtn.classList.add("mod-copy-btn-done");
+            setTimeout(function () {
+              copyBtn.classList.remove("mod-copy-btn-done");
+            }, 2000);
+          }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(ctext)
+            .then(function () {
+              copied(true);
+            })
+            .catch(function () {
+              fallbackCopyText(ctext, copied);
+            });
+        } else {
+          fallbackCopyText(ctext, copied);
+        }
+        return;
+      }
+
       var btn = e.target.closest(".add-cart-btn");
       if (!btn) return;
       var id = +btn.dataset.productId;
@@ -759,6 +859,7 @@
   }
 
   function injectCartUi() {
+    if (isModCatalog()) return;
     if (document.getElementById("cart-root")) return;
 
     var headerRight = document.querySelector(".header-right");
@@ -873,10 +974,12 @@
     var pagination = document.getElementById("pagination");
     if (!grid || !pagination) return;
 
-    injectCartUi();
-    attachCartEvents();
-    renderCart();
-    refreshCartBadge();
+    if (!isModCatalog()) {
+      injectCartUi();
+      attachCartEvents();
+      renderCart();
+      refreshCartBadge();
+    }
 
     Promise.all([fetchCategoriesDoc(), fetchProductsDoc()])
       .then(function (pair) {

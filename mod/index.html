@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moderator — Categories · TipTop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="mod.css">
+</head>
+<body class="page-mod page-mod-home">
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <img src="../TipTop%20Logo.jpg" alt="TipTop logo">
+      </div>
+      <span class="logo-text">Tip<span>Top</span></span>
+    </a>
+    <nav class="nav-shell" aria-label="Moderator navigation">
+      <div class="nav-links">
+        <div id="nav-category-links" class="nav-category-links"></div>
+        <div id="nav-more" class="nav-more" hidden>
+          <button type="button" id="nav-more-btn" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">
+            More ▾
+          </button>
+          <div id="nav-more-menu" class="nav-more-menu" role="menu" aria-label="More categories"></div>
+        </div>
+      </div>
+      <a href="../index.html" class="storefront-link">← Public catalog</a>
+    </nav>
+  </div>
+</header>
+
+<section class="mod-home-hero">
+  <div class="mod-home-inner">
+    <div class="mod-badge">Moderator</div>
+    <h1>Browse by category</h1>
+    <p>Open a collection, then copy the prepared message for each product.</p>
+  </div>
+</section>
+
+<div class="section" id="browse">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Shortcuts</div>
+      <h2 class="section-title">Categories</h2>
+    </div>
+  </div>
+
+  <div class="category-grid" id="category-grid-mount">
+    <p style="grid-column:1/-1;text-align:center;color:#64748b;font-size:0.9rem;">Loading categories…</p>
+  </div>
+</div>
+
+<footer>
+  <p>TipTop moderator tools · <a href="../index.html">Customer storefront</a></p>
+</footer>
+
+<script src="../shopcraft-supabase-config.js"></script>
+<script src="../shopcraft-api.js"></script>
+<script src="../site-nav-categories.js" defer></script>
+<script src="../home-categories.js" defer></script>
+</body>
+</html>

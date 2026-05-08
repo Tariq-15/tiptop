@@ -1056,6 +1056,7 @@
       $("pf-sku").value = "";
       $("pf-name").value = "";
       $("pf-desc").value = "";
+      if ($("pf-message-text")) $("pf-message-text").value = "";
       $("pf-price").value = "";
       $("pf-tags").value = "";
       $("pf-sort").value = "0";
@@ -1074,6 +1075,7 @@
       $("pf-sku").value = p.sku || "";
       $("pf-name").value = p.name || "";
       $("pf-desc").value = p.description || "";
+      if ($("pf-message-text")) $("pf-message-text").value = p.message_text || "";
       $("pf-price").value = p.price != null ? String(p.price) : "";
       $("pf-tags").value = Array.isArray(p.tags) ? p.tags.join(", ") : "";
       $("pf-sort").value = String(p.sort_order != null ? p.sort_order : 0);
@@ -1128,6 +1130,9 @@
       name: $("pf-name").value.trim(),
       category: ($("pf-category") && $("pf-category").value) || "",
       description: $("pf-desc").value,
+      message_text: $("pf-message-text")
+        ? String($("pf-message-text").value).trim()
+        : "",
       price: String($("pf-price").value).trim(),
       sort_order: Number($("pf-sort").value) || 0,
       is_new_arrival: $("pf-new").checked,
@@ -1244,6 +1249,7 @@
         sku: row.sku,
         name: row.name,
         description: row.description,
+        message_text: row.message_text != null ? String(row.message_text) : "",
         price: row.price,
         dimensions: row.dimensions,
         variants: row.variants,

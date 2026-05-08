@@ -50,6 +50,8 @@
       is_best_selling: !!row.is_best_selling,
       sort_order: row.sort_order != null ? Number(row.sort_order) : 0,
       is_active: row.is_active !== false,
+      message_text: row.message_text != null ? String(row.message_text) : "",
+      order_message: row.order_message != null ? String(row.order_message) : "",
     };
   }
 
