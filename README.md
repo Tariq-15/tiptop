@@ -13,6 +13,12 @@ Catalog management is in **`pour.html`** (not linked from the storefront). Uses 
 
 Setup and security: **[ADMIN.md](./ADMIN.md)**.
 
+To source the admin key from `.env`:
+
+- Create `.env` at repo root with `SHOPCRAFT_SUPABASE_SERVICE_ROLE_KEY=...`
+- Run `npm run prepare:admin-secrets` (or any `npm run build`)
+- This auto-generates `admin-secrets.js` from the env value
+
 ## Deploy (Vercel)
 
 This repo is a **static HTML** site at the root. **Next.js only exists under `drive-proxy/`** (optional local image proxy). Vercel was detecting that subfolder and treating the project as Next.js; **`vercel.json` sets `"framework": null`** (same as the **Other** preset), and **`.vercelignore`** skips `drive-proxy` for this deployment.

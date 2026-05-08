@@ -3,7 +3,8 @@
   "private": true,
   "description": "Static HTML storefront (TipTop). Next.js lives only in drive-proxy/ for local image proxy.",
   "scripts": {
-    "build": "node -e \"process.exit(0)\""
+    "build": "node scripts/generate-admin-secrets.mjs && node -e \"process.exit(0)\"",
+    "prepare:admin-secrets": "node scripts/generate-admin-secrets.mjs"
   },
   "engines": {
     "node": ">=18"
