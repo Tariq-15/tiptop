@@ -1,18 +1,12 @@
 /**
- * Index page — categories and product counts from Supabase (shopcraft-api.js).
+ * Index page — category grid, footer links, hero blurb (shopcraft-api.js).
+ * Header category pills: site-nav-categories.js + ShopcraftNav.renderCategoryLinks.
  */
 (function () {
   var mount = document.getElementById("category-grid-mount");
-  var navMount = document.getElementById("nav-category-links");
-  var navMoreRoot = document.getElementById("nav-more");
-  var navMoreBtn = document.getElementById("nav-more-btn");
-  var navMoreMenu = document.getElementById("nav-more-menu");
-  var navLinksWrap = navMount ? navMount.parentElement : null;
-  var messengerBtn = document.querySelector(".nav-shell .messenger-btn");
   var footerMount = document.getElementById("footer-category-links");
   var heroBlurb = document.getElementById("hero-category-blurb");
   if (!mount) return;
-  var navItems = [];
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -28,85 +22,6 @@
       })
       .sort();
     return skus[0] + " – " + skus[skus.length - 1];
-  }
-
-  function closeMoreMenu() {
-    if (!navMoreRoot || !navMoreBtn || !navMoreMenu) return;
-    navMoreBtn.setAttribute("aria-expanded", "false");
-    navMoreMenu.classList.remove("nav-more-menu-open");
-  }
-
-  function openMoreMenu() {
-    if (!navMoreRoot || !navMoreBtn || !navMoreMenu) return;
-    navMoreBtn.setAttribute("aria-expanded", "true");
-    navMoreMenu.classList.add("nav-more-menu-open");
-  }
-
-  function buildOverflowMenu(overflow) {
-    if (!navMoreRoot || !navMoreMenu) return;
-    if (!overflow.length) {
-      navMoreRoot.hidden = true;
-      navMoreMenu.innerHTML = "";
-      closeMoreMenu();
-      return;
-    }
-    navMoreRoot.hidden = false;
-    navMoreMenu.innerHTML = overflow
-      .map(function (item) {
-        return (
-          '<a class="nav-more-link" role="menuitem" href="' +
-          item.href +
-          '">' +
-          escapeHtml(item.label) +
-          "</a>"
-        );
-      })
-      .join("");
-  }
-
-  function distributeNavItems() {
-    if (!navMount || !navLinksWrap || !messengerBtn || !navItems.length) return;
-
-    navItems.forEach(function (item) {
-      item.el.hidden = false;
-    });
-
-    var navShell = messengerBtn.closest(".nav-shell");
-    if (!navShell) return;
-
-    var available =
-      navShell.clientWidth - messengerBtn.offsetWidth - 10;
-
-    var totalWidth = navItems.reduce(function (acc, item) {
-      return acc + item.el.offsetWidth + 6;
-    }, 0);
-    if (totalWidth <= available) {
-      buildOverflowMenu([]);
-      return;
-    }
-
-    var used = 0;
-    var overflow = [];
-    var reserveMore = 88; // fallback room for "More" pill
-    if (navMoreRoot && navMoreBtn) {
-      navMoreRoot.hidden = false;
-      reserveMore = Math.ceil(navMoreBtn.offsetWidth || reserveMore) + 10;
-    }
-
-    navItems.forEach(function (item, idx) {
-      var w = item.el.offsetWidth + 6;
-      var remaining = navItems.length - idx - 1;
-      var mustReserve = remaining > 0 ? reserveMore : 0;
-      if (used + w + mustReserve <= available) {
-        used += w;
-        item.el.hidden = false;
-      } else {
-        item.el.hidden = true;
-        overflow.push({ href: item.href, label: item.label });
-      }
-    });
-
-    buildOverflowMenu(overflow);
   }
 
   function fetchCategoriesDoc() {
@@ -132,19 +47,9 @@
       });
       var products = prodDoc.products || [];
 
-      defs.forEach(function (c) {
-        if (c.showInNav === false || !navMount) return;
-        var a = document.createElement("a");
-        a.href = "category.html?c=" + encodeURIComponent(c.slug);
-        a.textContent = c.navLabel || c.breadcrumbLabel || c.slug;
-        a.className = "nav-link";
-        navMount.appendChild(a);
-        navItems.push({
-          el: a,
-          href: a.href,
-          label: a.textContent,
-        });
-      });
+      if (typeof ShopcraftNav !== "undefined" && ShopcraftNav.renderCategoryLinks) {
+        ShopcraftNav.renderCategoryLinks(defs);
+      }
 
       defs.forEach(function (c) {
         if (c.showInNav === false || !footerMount) return;
@@ -198,26 +103,6 @@
           defs.length +
           " categories. Order directly via Facebook Messenger.";
       }
-
-      distributeNavItems();
-
-      if (navMoreBtn) {
-        navMoreBtn.addEventListener("click", function () {
-          var expanded = navMoreBtn.getAttribute("aria-expanded") === "true";
-          if (expanded) closeMoreMenu();
-          else openMoreMenu();
-        });
-      }
-
-      document.addEventListener("click", function (e) {
-        if (!navMoreRoot || navMoreRoot.hidden) return;
-        if (!navMoreRoot.contains(e.target)) closeMoreMenu();
-      });
-
-      window.addEventListener("resize", function () {
-        closeMoreMenu();
-        distributeNavItems();
-      });
     })
     .catch(function () {
       mount.innerHTML =

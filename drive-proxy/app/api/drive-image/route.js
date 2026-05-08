@@ -22,7 +22,7 @@ export async function GET(request) {
       redirect: "follow",
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; ShopCraftImageProxy/1.0; +https://example.invalid)",
+          "Mozilla/5.0 (compatible; TipTopImageProxy/1.0; +https://example.invalid)",
         Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
       },
       next: { revalidate: 86400 },

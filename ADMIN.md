@@ -1,4 +1,4 @@
-# ShopCraft — Pour (catalog admin)
+# TipTop — Pour (catalog admin)
 
 The public storefront uses the **anon** key and read-only RLS.
 

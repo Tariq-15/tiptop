@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "ShopCraft Drive image proxy",
+  title: "TipTop Drive image proxy",
 };
 
 export default function RootLayout({ children }) {

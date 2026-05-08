@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Category — ShopCraft</title>
+<title>Category — TipTop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
@@ -17,14 +17,18 @@
       <div class="logo-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
-      <span class="logo-text">Shop<span>Craft</span></span>
+      <span class="logo-text">Tip<span>Top</span></span>
     </a>
-    <nav class="site-nav-primary" aria-label="Site sections">
-      <a href="index.html" class="site-nav-link">Home</a>
-      <a href="index.html#browse" class="site-nav-link" aria-current="page">Browse</a>
-      <a href="pour.html" class="site-nav-link">Pour</a>
-    </nav>
-    <nav class="nav-shell" aria-label="Actions" style="flex:1;justify-content:flex-end;min-width:0;">
+    <nav class="nav-shell" aria-label="Main navigation">
+      <div class="nav-links">
+        <div id="nav-category-links" class="nav-category-links"></div>
+        <div id="nav-more" class="nav-more" hidden>
+          <button type="button" id="nav-more-btn" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">
+            More ▾
+          </button>
+          <div id="nav-more-menu" class="nav-more-menu" role="menu" aria-label="More categories"></div>
+        </div>
+      </div>
       <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" rel="noopener noreferrer" class="messenger-btn">💬 Order Now</a>
     </nav>
   </div>
@@ -51,15 +55,16 @@
 
 <footer>
   <div class="footer-simple">
-    <span class="logo-text">Shop<span style="color:#FF8A65">Craft</span></span>
+    <span class="logo-text">Tip<span style="color:#FF8A65">Top</span></span>
     <p>Order any product directly via Facebook Messenger — fast & personal.</p>
     <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="footer-messenger-btn">💬 Order via Facebook Messenger</a>
-    <p class="footer-copy">© 2025 ShopCraft. All rights reserved.</p>
+    <p class="footer-copy">© 2025 TipTop. All rights reserved.</p>
   </div>
 </footer>
 
 <script src="shopcraft-supabase-config.js"></script>
 <script src="shopcraft-api.js"></script>
+<script src="site-nav-categories.js" defer></script>
 <script src="catalog-cart.js" defer></script>
 </body>
 </html>

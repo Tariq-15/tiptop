@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <>
-      <h1 style={{ fontSize: "1.25rem" }}>ShopCraft Drive proxy</h1>
+      <h1 style={{ fontSize: "1.25rem" }}>TipTop Drive proxy</h1>
       <p style={{ color: "#555", maxWidth: 520 }}>
         API: <code>/api/drive-image?id=FILE_ID</code>
         <br />

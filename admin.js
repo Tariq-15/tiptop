@@ -1,5 +1,5 @@
 /**
- * ShopCraft catalog editor — Supabase PostgREST.
+ * TipTop catalog editor — Supabase PostgREST.
  */
 (function () {
   var cfg = { base: "", apiKey: "", serviceRole: false };

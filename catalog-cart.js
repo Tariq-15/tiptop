@@ -1,5 +1,5 @@
 /**
- * ShopCraft — load products from Supabase, pagination, galleries, cart with variant dropdowns.
+ * TipTop — load products from Supabase, pagination, galleries, cart with variant dropdowns.
  *
  * Optional: set window.SHOPCRAFT_DRIVE_PROXY = "http://localhost:3000/api/drive-image"
  * before this script when using the Next.js proxy in drive-proxy/ (same-origin in production).
@@ -72,8 +72,8 @@
     if (t && catDef.pageTitle) t.textContent = catDef.pageTitle;
     var s = document.getElementById("catalog-page-subtitle");
     if (s && catDef.subtitle != null) s.textContent = catDef.subtitle;
-    var dt = catDef.documentTitle || catDef.breadcrumbLabel || catDef.slug || "ShopCraft";
-    document.title = dt + " — ShopCraft";
+    var dt = catDef.documentTitle || catDef.breadcrumbLabel || catDef.slug || "TipTop";
+    document.title = dt + " — TipTop";
   }
 
   function escapeHtml(s) {

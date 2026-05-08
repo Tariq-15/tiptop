@@ -1,4 +1,4 @@
-# ShopCraft website
+# TipTop website
 
 Static HTML storefront with category pages, cart, and Supabase-backed catalog.
 

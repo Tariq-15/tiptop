@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ShopCraft — Product Catalog</title>
+<title>TipTop — Product Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
@@ -89,114 +89,6 @@
     margin-left: 6px;
     flex: 1 1 auto;
     overflow: hidden;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-    margin-right: auto;
-    flex: 1 1 auto;
-    overflow: hidden;
-  }
-
-  .nav-category-links {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    max-width: 100%;
-    flex-wrap: nowrap;
-    overflow: hidden;
-  }
-
-  .nav-category-links > [hidden] {
-    display: none !important;
-  }
-
-  .nav-link {
-    display: inline-flex;
-    align-items: center;
-    height: 34px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    font-size: 0.82rem;
-    color: var(--muted);
-    text-decoration: none;
-    font-weight: 500;
-    white-space: nowrap;
-    max-width: 170px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color 0.2s, background 0.2s, border-color 0.2s;
-  }
-
-  .nav-link:hover {
-    color: var(--charcoal);
-    background: #f5f2ec;
-    border-color: var(--border);
-  }
-
-  .nav-more {
-    position: relative;
-    flex: 0 0 auto;
-  }
-
-  .nav-more-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 34px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--warm-white);
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-  }
-
-  .nav-more-btn:hover,
-  .nav-more-btn[aria-expanded="true"] {
-    border-color: #d4cdc1;
-    color: var(--charcoal);
-    background: #f9f7f2;
-  }
-
-  .nav-more-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 210px;
-    max-height: 280px;
-    overflow: auto;
-    padding: 8px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--warm-white);
-    box-shadow: 0 12px 34px rgba(0,0,0,0.1);
-    display: none;
-    z-index: 120;
-  }
-
-  .nav-more-menu-open { display: block; }
-
-  .nav-more-link {
-    display: block;
-    padding: 8px 10px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    color: var(--charcoal);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .nav-more-link:hover {
-    background: #f4efe6;
   }
 
   .messenger-btn {
@@ -521,13 +413,8 @@
       <div class="logo-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
-      <span class="logo-text">Shop<span>Craft</span></span>
+      <span class="logo-text">Tip<span>Top</span></span>
     </a>
-    <nav class="site-nav-primary" aria-label="Site sections">
-      <a href="index.html" class="site-nav-link" aria-current="page">Home</a>
-      <a href="index.html#browse" class="site-nav-link">Browse</a>
-      <a href="pour.html" class="site-nav-link">Pour</a>
-    </nav>
     <nav class="nav-shell">
       <div class="nav-links">
         <div id="nav-category-links" class="nav-category-links"></div>
@@ -602,7 +489,7 @@
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="logo-text">Shop<span style="color:#FF8A65">Craft</span></div>
+        <div class="logo-text">Tip<span style="color:#FF8A65">Top</span></div>
         <p class="footer-desc">A curated catalog of home, lifestyle, and artisan products. Order via Facebook Messenger for a personal shopping experience.</p>
         <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="footer-messenger">
           💬 Order via Facebook Messenger
@@ -619,7 +506,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 ShopCraft. All rights reserved.</p>
+      <p>© 2025 TipTop. All rights reserved.</p>
       <p>Order via Facebook — Fast & Easy</p>
     </div>
   </div>
@@ -627,6 +514,7 @@
 
 <script src="shopcraft-supabase-config.js"></script>
 <script src="shopcraft-api.js"></script>
+<script src="site-nav-categories.js" defer></script>
 <script src="home-categories.js" defer></script>
 </body>
 </html>
