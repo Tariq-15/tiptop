@@ -19,6 +19,11 @@
   function initCfg() {
     cfg.base = String(window.SHOPCRAFT_SUPABASE_URL || "").replace(/\/$/, "");
     var svc = String(window.SHOPCRAFT_SUPABASE_SERVICE_ROLE_KEY || "").trim();
+    if (!svc) {
+      try {
+        svc = String(localStorage.getItem("SHOPCRAFT_SUPABASE_SERVICE_ROLE_KEY") || "").trim();
+      } catch (_) {}
+    }
     var anon = String(
       window.SHOPCRAFT_SUPABASE_ANON_KEY || window.SHOPCRAFT_SUPABASE_KEY || ""
     ).trim();
@@ -32,6 +37,18 @@
 
   function hasServiceRole() {
     return cfg.serviceRole;
+  }
+
+  function writeAccessHint() {
+    return (
+      "Write access is disabled. Add SHOPCRAFT_SUPABASE_SERVICE_ROLE_KEY in admin-secrets.js (or set it via localStorage key SHOPCRAFT_SUPABASE_SERVICE_ROLE_KEY) and reload Pour."
+    );
+  }
+
+  function requireWriteAccess() {
+    if (hasServiceRole()) return true;
+    toast(writeAccessHint(), true);
+    return false;
   }
 
   function toast(msg, isErr) {
@@ -580,6 +597,7 @@
   }
 
   async function persistCategoryOrder() {
+    if (!requireWriteAccess()) return;
     var order = []
       .slice.call($("category-sort-list").querySelectorAll(".cat-sort-item"))
       .map(function (li) {
@@ -1061,6 +1079,7 @@
 
   async function submitProductForm(e) {
     e.preventDefault();
+    if (!requireWriteAccess()) return;
     var idVal = $("pf-edit-id").value;
     var isEdit = idVal !== "";
 
@@ -1128,6 +1147,10 @@
   }
 
   async function setProductActive(id, active, checkboxEl) {
+    if (!requireWriteAccess()) {
+      if (checkboxEl) checkboxEl.checked = !active;
+      return;
+    }
     try {
       var r = await api("/rest/v1/products?id=eq." + encodeURIComponent(String(id)), {
         method: "PATCH",
@@ -1153,6 +1176,7 @@
   }
 
   async function deleteProduct(id) {
+    if (!requireWriteAccess()) return;
     if (!confirm("Delete this product permanently?")) return;
     var r = await api("/rest/v1/products?id=eq." + encodeURIComponent(String(id)), {
       method: "DELETE",
@@ -1257,7 +1281,7 @@
     }
     if (!hasServiceRole()) {
       toast(
-        "Using anon key: listing works; add the service role key in Supabase (API settings) to save changes.",
+        "Using anon key: listing works, but writes are blocked. " + writeAccessHint(),
         false
       );
     }
