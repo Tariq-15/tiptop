@@ -517,8 +517,23 @@
     rebuild();
   }
 
-  function openMessengerOrder() {
-    window.open(MESSENGER_BASE, "_blank", "noopener,noreferrer");
+  function buildProductMessengerLink(product, variantIndex) {
+    var sku = String((product && product.sku) || "").trim();
+    var name = String((product && product.name) || "").trim();
+    var parts = [];
+    if (sku) parts.push(sku);
+    if (name) parts.push(name);
+    if (product && product.variants && product.variants.length) {
+      var v = product.variants[variantIndex] || product.variants[0];
+      if (v && v.label) parts.push(String(v.label).trim());
+    }
+    parts.push("", "অর্ডারটি কনফার্ম করুন");
+    return MESSENGER_BASE + "?text=" + encodeURIComponent(parts.join("\n"));
+  }
+
+  function openMessengerOrder(product, variantIndex) {
+    var target = buildProductMessengerLink(product, variantIndex || 0);
+    window.open(target, "_blank", "noopener,noreferrer");
   }
 
   function bindProductInteractions(grid) {
@@ -548,7 +563,14 @@
 
       var btn = e.target.closest(".add-cart-btn");
       if (!btn) return;
-      openMessengerOrder();
+      var id = +btn.dataset.productId;
+      var p = findProduct(id);
+      if (!p) return;
+      var variantIndex = 0;
+      var card = btn.closest(".product-card");
+      var s = card ? card.querySelector(".variant-select") : null;
+      if (s) variantIndex = +s.value;
+      openMessengerOrder(p, variantIndex);
     });
   }
 
