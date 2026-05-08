@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopCraft — Product Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --warm-white: #FFFFFF;
+    --charcoal: #1A1A1A;
+    --muted: #6B6B6B;
+    --border: #E8E4DC;
+    --accent: #C8501A;
+    --accent-hover: #A83E12;
+    --green: #2D5016;
+    --card-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    --card-shadow-hover: 0 8px 40px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Parkinsans', 'Anek Bangla', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 68px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--charcoal);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-icon svg { width: 20px; height: 20px; fill: white; }
+
+  .logo-text {
+    font-family: 'Parkinsans', 'Anek Bangla', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: var(--charcoal);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  nav.nav-shell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin-left: 6px;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    margin-right: auto;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .nav-category-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .nav-category-links > [hidden] {
+    display: none !important;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: var(--charcoal);
+    background: #f5f2ec;
+    border-color: var(--border);
+  }
+
+  .nav-more {
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .nav-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--warm-white);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .nav-more-btn:hover,
+  .nav-more-btn[aria-expanded="true"] {
+    border-color: #d4cdc1;
+    color: var(--charcoal);
+    background: #f9f7f2;
+  }
+
+  .nav-more-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 210px;
+    max-height: 280px;
+    overflow: auto;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--warm-white);
+    box-shadow: 0 12px 34px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 120;
+  }
+
+  .nav-more-menu-open { display: block; }
+
+  .nav-more-link {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: var(--charcoal);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .nav-more-link:hover {
+    background: #f4efe6;
+  }
+
+  .messenger-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    transition: background 0.2s !important;
+    white-space: nowrap;
+    text-decoration: none !important;
+  }
+
+  .messenger-btn:hover { background: var(--accent-hover) !important; color: white !important; }
+
+  /* HERO */
+  .hero {
+    background: var(--charcoal);
+    padding: 80px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(200,80,26,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(45,80,22,0.1) 0%, transparent 60%);
+  }
+
+  .hero-content { position: relative; max-width: 640px; margin: 0 auto; }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(200,80,26,0.2);
+    color: #FF8A65;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(200,80,26,0.3);
+  }
+
+  .hero h1 {
+    font-family: 'Parkinsans', 'Anek Bangla', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: white;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 em { font-style: italic; color: #FF8A65; }
+
+  .hero p {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .hero-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+  /* CATEGORIES SECTION */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Parkinsans', 'Anek Bangla', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--charcoal);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  /* CATEGORY GRID */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .category-card {
+    background: var(--warm-white);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: block;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .category-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    background: #f0ece4;
+  }
+
+  .category-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  .category-body {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .category-name {
+    font-family: 'Parkinsans', 'Anek Bangla', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--charcoal);
+    letter-spacing: -0.01em;
+  }
+
+  .category-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .view-btn {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* FEATURES BAR */
+  .features-bar {
+    background: var(--warm-white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px;
+  }
+
+  .features-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+  }
+
+  .feature-item { padding: 8px; }
+  .feature-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .feature-title { font-size: 0.85rem; font-weight: 600; color: var(--charcoal); }
+  .feature-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--charcoal);
+    color: white;
+    padding: 48px 24px 32px;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+
+  .footer-brand .logo-text { color: white; }
+
+  .footer-desc {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 12px;
+    max-width: 260px;
+    line-height: 1.7;
+  }
+
+  .footer-link-group h4 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 16px;
+  }
+
+  .footer-link-group a {
+    display: block;
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+
+  .footer-link-group a:hover { color: white; }
+
+  .footer-messenger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+
+  .footer-messenger:hover { background: rgba(255,255,255,0.15); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+    .features-inner { grid-template-columns: repeat(2, 1fr); }
+    .nav-shell .nav-links {
+      display: none;
+    }
+    .nav-shell {
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .category-grid { grid-template-columns: 1fr; }
+    .hero { padding: 52px 20px; }
+    .section { padding: 40px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">Shop<span>Craft</span></span>
+    </a>
+    <nav class="site-nav-primary" aria-label="Site sections">
+      <a href="index.html" class="site-nav-link" aria-current="page">Home</a>
+      <a href="index.html#browse" class="site-nav-link">Browse</a>
+      <a href="pour.html" class="site-nav-link">Pour</a>
+    </nav>
+    <nav class="nav-shell">
+      <div class="nav-links">
+        <div id="nav-category-links" class="nav-category-links"></div>
+        <div id="nav-more" class="nav-more" hidden>
+          <button type="button" id="nav-more-btn" class="nav-more-btn" aria-expanded="false" aria-haspopup="true">
+            More ▾
+          </button>
+          <div id="nav-more-menu" class="nav-more-menu" role="menu" aria-label="More categories"></div>
+        </div>
+      </div>
+      <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="messenger-btn">
+        💬 Order Now
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">✦ Curated Home & Lifestyle Products</div>
+    <h1>Beautiful Things for <em>Beautiful Homes</em></h1>
+    <p id="hero-category-blurb">Browse our hand-picked collection. Order directly via Facebook Messenger.</p>
+    <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="hero-cta">
+      💬 Message Us to Order
+    </a>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<div class="section" id="browse">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Browse Collections</div>
+      <h2 class="section-title">Shop by Category</h2>
+    </div>
+  </div>
+
+  <div class="category-grid" id="category-grid-mount">
+    <p style="grid-column:1/-1;text-align:center;color:#6b6b6b;font-size:0.9rem;">Loading categories…</p>
+  </div>
+</div>
+
+<!-- FEATURES BAR -->
+<div class="features-bar">
+  <div class="features-inner">
+    <div class="feature-item">
+      <div class="feature-icon">📦</div>
+      <div class="feature-title">Easy Ordering</div>
+      <div class="feature-desc">Order directly via Messenger</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">Handpicked Quality</div>
+      <div class="feature-desc">Curated products only</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🚚</div>
+      <div class="feature-title">Fast Delivery</div>
+      <div class="feature-desc">Nationwide shipping available</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">💬</div>
+      <div class="feature-title">Personal Support</div>
+      <div class="feature-desc">We reply quickly on Messenger</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-text">Shop<span style="color:#FF8A65">Craft</span></div>
+        <p class="footer-desc">A curated catalog of home, lifestyle, and artisan products. Order via Facebook Messenger for a personal shopping experience.</p>
+        <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="footer-messenger">
+          💬 Order via Facebook Messenger
+        </a>
+      </div>
+      <div class="footer-link-group">
+        <h4>Categories</h4>
+        <div id="footer-category-links"></div>
+      </div>
+      <div class="footer-link-group">
+        <h4>Contact</h4>
+        <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank">Facebook Messenger</a>
+        <a href="https://facebook.com/YOUR_PAGE_USERNAME" target="_blank">Facebook Page</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ShopCraft. All rights reserved.</p>
+      <p>Order via Facebook — Fast & Easy</p>
+    </div>
+  </div>
+</footer>
+
+<script src="shopcraft-supabase-config.js"></script>
+<script src="shopcraft-api.js"></script>
+<script src="home-categories.js" defer></script>
+</body>
+</html>

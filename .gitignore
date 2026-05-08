@@ -1,0 +1,7 @@
+node_modules/
+drive-proxy/.next/
+admin-secrets.js
+.env
+.env.*
+*.log
+.DS_Store

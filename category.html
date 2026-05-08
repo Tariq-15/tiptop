@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Category — ShopCraft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body class="page-category">
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">Shop<span>Craft</span></span>
+    </a>
+    <nav class="site-nav-primary" aria-label="Site sections">
+      <a href="index.html" class="site-nav-link">Home</a>
+      <a href="index.html#browse" class="site-nav-link" aria-current="page">Browse</a>
+      <a href="pour.html" class="site-nav-link">Pour</a>
+    </nav>
+    <nav class="nav-shell" aria-label="Actions" style="flex:1;justify-content:flex-end;min-width:0;">
+      <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" rel="noopener noreferrer" class="messenger-btn">💬 Order Now</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> › <span id="catalog-breadcrumb-current">…</span>
+    </div>
+    <h1 class="page-title" id="catalog-page-title">Loading…</h1>
+    <p class="page-subtitle" id="catalog-page-subtitle"></p>
+    <div class="page-meta">
+      <span class="product-count" id="catalog-count-products">—</span>
+      <span class="product-count" id="catalog-sku-range"></span>
+    </div>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="product-grid" id="productGrid"></div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<footer>
+  <div class="footer-simple">
+    <span class="logo-text">Shop<span style="color:#FF8A65">Craft</span></span>
+    <p>Order any product directly via Facebook Messenger — fast & personal.</p>
+    <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" class="footer-messenger-btn">💬 Order via Facebook Messenger</a>
+    <p class="footer-copy">© 2025 ShopCraft. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="shopcraft-supabase-config.js"></script>
+<script src="shopcraft-api.js"></script>
+<script src="catalog-cart.js" defer></script>
+</body>
+</html>

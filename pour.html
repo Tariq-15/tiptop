@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour — ShopCraft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --charcoal: #1A1A1A;
+    --muted: #6B6B6B;
+    --border: #E8E4DC;
+    --accent: #C8501A;
+    --danger: #b3261e;
+    --card: #fff;
+    --shadow: 0 2px 14px rgba(0,0,0,.06);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Anek Bangla', 'Parkinsans', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.45;
+    font-size: 15px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .admin-wrap { max-width: 960px; margin: 0 auto; padding: clamp(16px, 4vw, 28px); }
+  h1 { font-size: clamp(1.15rem, 3vw, 1.35rem); font-weight: 700; letter-spacing: -0.02em; }
+  .admin-sub { font-size: 0.8125rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4; }
+  label { display: block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; color: var(--muted); }
+  input[type="text"], select, textarea {
+    font: inherit;
+    color: var(--charcoal);
+  }
+  .admin-input, .dialog-scroll select, .dialog-scroll input[type="text"], .dialog-scroll textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 0.9375rem;
+    background: #FAFAF8;
+    color: var(--charcoal);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  .admin-input:hover, .dialog-scroll select:hover, .dialog-scroll input[type="text"]:hover, .dialog-scroll textarea:hover {
+    background: #fff;
+  }
+  .admin-input:focus, .dialog-scroll select:focus, .dialog-scroll input[type="text"]:focus, .dialog-scroll textarea:focus {
+    outline: none;
+    border-color: rgba(200,80,26,0.45);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(200,80,26,0.1);
+  }
+  textarea.admin-input { min-height: 88px; resize: vertical; line-height: 1.5; }
+  textarea.admin-input--desc {
+    min-height: 108px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .field { margin-bottom: 14px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .checkbox-row input { width: auto; accent-color: var(--accent); }
+  .checkbox-row label { margin: 0; text-transform: none; letter-spacing: 0; font-size: 0.875rem; font-weight: 500; color: var(--charcoal); }
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(0.96); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-ghost { background: transparent; color: var(--charcoal); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: rgba(0,0,0,.03); }
+  .btn-sm { padding: 6px 11px; font-size: 0.78rem; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-add-row {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: rgba(200,80,26,0.06);
+    border: 1px dashed rgba(200,80,26,0.35);
+  }
+  .btn-add-row:hover { background: rgba(200,80,26,0.1); }
+  .admin-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .admin-bar {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+  .admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .admin-tabs button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 14px;
+  }
+  .admin-tabs button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,80,26,0.06);
+  }
+  .admin-toast {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 16px;
+    right: 16px;
+    max-width: 400px;
+    margin-left: auto;
+    padding: 11px 14px;
+    background: var(--charcoal);
+    color: #fff;
+    border-radius: var(--radius);
+    font-size: 0.8125rem;
+    z-index: 200;
+    box-shadow: var(--shadow);
+  }
+  .admin-toast-err { background: var(--danger); }
+  [hidden] { display: none !important; }
+  #category-sort-list { list-style: none; }
+  .cat-sort-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    background: #fff;
+    cursor: grab;
+    box-shadow: var(--shadow);
+  }
+  .cat-sort-item.dragging { opacity: 0.55; }
+  .cat-sort-grip { color: var(--muted); letter-spacing: 2px; user-select: none; font-size: 0.85rem; }
+  .cat-sort-label { font-weight: 600; flex: 1; font-size: 0.9rem; }
+  .cat-sort-meta { font-size: 0.72rem; color: var(--muted); }
+  .admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .admin-toolbar select.toolbar-select {
+    width: auto;
+    min-width: min(160px, 100%);
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #FAFAF8;
+    font-size: 0.875rem;
+  }
+  .admin-toolbar label { margin: 0; display: inline-flex; align-items: center; gap: 6px; text-transform: none; letter-spacing: 0; font-size: 0.78rem; }
+  .admin-toolbar-products {
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-toolbar-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+  .btn-add-product {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .btn-add-product svg {
+    flex-shrink: 0;
+  }
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; min-width: 640px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  th { background: var(--cream); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  .admin-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; background: var(--cream); }
+  .admin-thumb-none { color: var(--muted); font-size: 0.75rem; }
+  .admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+  .col-active { text-align: center; width: 72px; }
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 10px;
+    background: #FAFAF8;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { color: var(--accent); border-color: rgba(200,80,26,0.35); background: #fff; }
+  .icon-btn-danger:hover { color: var(--danger); border-color: rgba(179,38,30,0.35); }
+  /* Toggle switch */
+  .toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .toggle-slider {
+    display: block;
+    width: 44px;
+    height: 26px;
+    border-radius: 26px;
+    background: #D8D4CC;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .toggle-slider::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    top: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    transition: transform 0.2s;
+  }
+  .toggle input:checked + .toggle-slider {
+    background: var(--accent);
+  }
+  .toggle input:checked + .toggle-slider::after {
+    transform: translateX(18px);
+  }
+  .toggle input:focus-visible + .toggle-slider {
+    box-shadow: 0 0 0 3px rgba(200,80,26,0.25);
+  }
+  .toggle-table .toggle-slider {
+    width: 40px;
+    height: 22px;
+  }
+  .toggle-table .toggle-slider::after {
+    width: 16px;
+    height: 16px;
+    top: 3px;
+    left: 3px;
+  }
+  .toggle-table input:checked + .toggle-slider::after {
+    transform: translateX(18px);
+  }
+  .field-toggle .toggle-label-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--charcoal);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 10px;
+  }
+  .field-feedback {
+    font-size: 0.75rem;
+    margin-top: 6px;
+    line-height: 1.35;
+    color: var(--danger);
+    font-weight: 600;
+    min-height: 0;
+  }
+  .field-feedback:empty {
+    display: none;
+  }
+  .admin-input.admin-input--invalid {
+    border-color: rgba(179, 38, 30, 0.55);
+    box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.12);
+  }
+  .field-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 14px;
+  }
+  .field-toggle--compact .toggle-slider {
+    width: 34px;
+    height: 18px;
+    border-radius: 18px;
+  }
+  .field-toggle--compact .toggle-slider::after {
+    width: 14px;
+    height: 14px;
+    left: 2px;
+    top: 2px;
+  }
+  .field-toggle--compact input:checked + .toggle-slider::after {
+    transform: translateX(16px);
+  }
+  .field-toggle--compact .toggle-label-text {
+    font-size: 0.72rem;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+  /* Tags & highlight badges (dialog) */
+  .form-section--merch {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(250, 248, 244, 0.85);
+    padding: 12px 12px 10px;
+    margin-bottom: 14px;
+  }
+  .form-section--merch .form-section-head {
+    margin-bottom: 10px;
+  }
+  .form-section--merch .form-section-title {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .merch-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .merch-pill {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+    user-select: none;
+  }
+  .merch-pill input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .merch-pill-ui {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--muted);
+    transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+  .merch-pill:hover .merch-pill-ui {
+    border-color: rgba(200, 80, 26, 0.35);
+    color: var(--charcoal);
+  }
+  .merch-pill input:focus-visible + .merch-pill-ui {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .merch-pill--new input:checked + .merch-pill-ui {
+    border-color: rgba(21, 101, 192, 0.35);
+    background: #E3F2FD;
+    color: #1565C0;
+    box-shadow: 0 0 0 1px rgba(21, 101, 192, 0.12);
+  }
+  .merch-pill--best input:checked + .merch-pill-ui {
+    border-color: rgba(230, 81, 0, 0.35);
+    background: #FFF3E0;
+    color: #E65100;
+    box-shadow: 0 0 0 1px rgba(230, 81, 0, 0.12);
+  }
+  .form-section--merch .field {
+    margin-bottom: 0;
+  }
+  .form-section--merch .field label {
+    margin-bottom: 4px;
+  }
+  /* Dialog — hidden until showModal(); display:flex must not apply when closed */
+  dialog.product-dialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    width: min(98vw, 1120px);
+    max-height: min(92vh, 760px);
+    box-shadow: 0 24px 64px rgba(0,0,0,.2), 0 0 1px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  dialog.product-dialog:not([open]) {
+    display: none;
+  }
+  dialog.product-dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  dialog::backdrop {
+    background: rgba(26,26,26,0.45);
+    backdrop-filter: blur(2px);
+  }
+  .dialog-inner {
+    padding: 0;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+  .dialog-head h2 { font-size: 1.05rem; font-weight: 700; margin: 0; flex: 1; min-width: 0; }
+  .dialog-head-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .btn-icon-eye {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 10px;
+    background: #FAFAF8;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .btn-icon-eye:hover { color: var(--accent); border-color: rgba(200,80,26,0.35); background: #fff; }
+  .btn-icon-eye svg { display: block; }
+  @media (min-width: 960px) {
+    .btn-icon-eye { display: none; }
+  }
+  .btn-close {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .btn-close:hover { background: var(--cream); color: var(--charcoal); }
+  .dialog-body-scroll {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(88vh - 120px);
+  }
+  .dialog-layout {
+    display: grid;
+    gap: 14px 20px;
+    align-items: start;
+    padding: 14px 16px 16px;
+  }
+  @media (min-width: 960px) {
+    .dialog-layout {
+      grid-template-columns: minmax(260px, 1fr) minmax(280px, 1fr) 252px;
+    }
+    .dialog-col-preview {
+      position: sticky;
+      top: 0;
+    }
+  }
+  @media (max-width: 959px) {
+    .dialog-col-preview {
+      display: none;
+      order: -1;
+    }
+    .dialog-layout--preview-open .dialog-col-preview {
+      display: block;
+    }
+  }
+  .dialog-col-form .field { margin-bottom: 10px; }
+  .dialog-col-form .field:last-child { margin-bottom: 0; }
+  .dialog-col-lists .field { margin-bottom: 10px; }
+  .preview-panel-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  /* Storefront preview: match shared.css — only constrain width */
+  .dialog-col-preview .product-card {
+    max-width: 100%;
+  }
+  .dialog-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+    flex-shrink: 0;
+  }
+  .dialog-actions button { min-width: 88px; }
+  /* List editors */
+  .list-editor { display: flex; flex-direction: column; gap: 8px; }
+  .list-editor-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .list-editor-row.variant-row {
+    grid-template-columns: 1fr minmax(72px, 88px) auto;
+  }
+  .list-editor-row input.admin-input { margin: 0; font-size: 0.875rem; padding: 10px 12px; }
+  .btn-remove-row {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    flex-shrink: 0;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--muted);
+    background: var(--cream);
+    border: 1px solid var(--border);
+  }
+  .btn-remove-row:hover { color: var(--danger); border-color: rgba(179,38,30,0.35); background: #fff; }
+  @media (max-width: 480px) {
+    .list-editor-row.variant-row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .list-editor-row.variant-row .btn-remove-row {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: auto;
+      padding: 8px;
+    }
+  }
+  @media (max-width: 639px) {
+    .row-2 { grid-template-columns: 1fr; }
+    dialog.product-dialog[open] {
+      width: calc(100vw - 16px);
+      max-height: calc(100dvh - 16px);
+      border-radius: 12px;
+    }
+    dialog.product-dialog[open] .dialog-inner {
+      max-height: calc(100dvh - 16px);
+    }
+    .dialog-body-scroll {
+      max-height: calc(100dvh - 130px);
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">Shop<span>Craft</span></span>
+    </a>
+    <nav class="site-nav-primary" aria-label="Site sections">
+      <a href="index.html" class="site-nav-link">Home</a>
+      <a href="index.html#browse" class="site-nav-link">Browse</a>
+      <a href="pour.html" class="site-nav-link" aria-current="page">Pour</a>
+    </nav>
+    <nav class="nav-shell" aria-label="Actions" style="flex:1;justify-content:flex-end;min-width:0;">
+      <a href="https://m.me/YOUR_PAGE_USERNAME" target="_blank" rel="noopener noreferrer" class="messenger-btn">💬 Order Now</a>
+    </nav>
+  </div>
+</header>
+
+<div id="admin-toast" class="admin-toast" hidden role="status"></div>
+
+<div class="admin-wrap">
+  <div id="app-panel">
+    <div class="admin-bar">
+      <div>
+        <h1>Pour</h1>
+      </div>
+      <span class="admin-tabs" role="tablist">
+        <button type="button" data-admin-tab="products" class="active">Products</button>
+        <button type="button" data-admin-tab="categories">Categories</button>
+      </span>
+    </div>
+
+    <section data-admin-pane="categories" hidden>
+      <p class="admin-sub">Drag to reorder, then save.</p>
+      <ul id="category-sort-list"></ul>
+      <button type="button" id="btn-save-categories" class="btn-primary" style="margin-top:12px">Save order</button>
+    </section>
+
+    <section data-admin-pane="products">
+      <div class="admin-toolbar admin-toolbar-products">
+        <div class="admin-toolbar-left">
+          <label>
+            <span style="color:var(--muted);">Category</span>
+            <select id="product-filter-cat" class="admin-input toolbar-select" aria-label="Filter by category"></select>
+          </label>
+          <label>
+            <span style="color:var(--muted);">Sort</span>
+            <select id="product-sort" class="admin-input toolbar-select" aria-label="Sort products">
+              <option value="sort_order">Manual order</option>
+              <option value="name">Name</option>
+              <option value="sku">SKU</option>
+              <option value="price">Price</option>
+              <option value="category">Category</option>
+            </select>
+          </label>
+          <span id="product-count-label" style="font-size:0.78rem;color:var(--muted);"></span>
+        </div>
+        <button type="button" id="btn-add-product" class="btn-primary btn-sm btn-add-product" aria-label="Add product">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Add product
+        </button>
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Tags</th>
+              <th>Active</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="product-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<dialog id="product-dialog" class="product-dialog">
+  <form id="form-product" class="dialog-inner">
+    <div class="dialog-head">
+      <h2 id="product-dialog-title">Product</h2>
+      <div class="dialog-head-actions">
+        <button type="button" id="btn-preview-eye" class="btn-icon-eye" title="Show card preview" aria-label="Show card preview">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>
+        <button type="button" id="btn-close-dialog" class="btn-close" aria-label="Close">×</button>
+      </div>
+    </div>
+    <div class="dialog-body-scroll">
+      <div id="dialog-layout" class="dialog-layout">
+        <div class="dialog-col dialog-col-form">
+          <input type="hidden" id="pf-edit-id" value="">
+          <div class="row-2">
+            <div class="field">
+              <label for="pf-sku">SKU</label>
+              <input id="pf-sku" class="admin-input" name="sku" required autocomplete="off" aria-describedby="pf-sku-feedback">
+              <p id="pf-sku-feedback" class="field-feedback" role="status" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="pf-category">Category</label>
+              <select id="pf-category" class="admin-input" name="category" required></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pf-name">Name</label>
+            <input id="pf-name" class="admin-input" name="name" required autocomplete="off">
+          </div>
+          <div class="field field-toggle field-toggle--compact">
+            <label class="toggle" title="Shown on storefront">
+              <input type="checkbox" id="pf-active" checked>
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label-text">Visible on store</span>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="pf-price">Price</label>
+              <input id="pf-price" class="admin-input" name="price" required placeholder="1200 or 300-370">
+            </div>
+            <div class="field">
+              <label for="pf-sort">Sort</label>
+              <input id="pf-sort" class="admin-input" type="text" inputmode="numeric" value="0" name="sort_order">
+            </div>
+          </div>
+
+          <div class="form-section form-section--merch">
+            <div class="form-section-head">
+              <span class="form-section-title">Tags &amp; card badges</span>
+            </div>
+            <div class="merch-badge-row" role="group" aria-label="Product highlights">
+              <label class="merch-pill merch-pill--new">
+                <input type="checkbox" id="pf-new" name="new_arrival">
+                <span class="merch-pill-ui">New arrival</span>
+              </label>
+              <label class="merch-pill merch-pill--best">
+                <input type="checkbox" id="pf-best" name="best_selling">
+                <span class="merch-pill-ui">Best selling</span>
+              </label>
+            </div>
+            <div class="field">
+              <label for="pf-tags">Tags</label>
+              <input id="pf-tags" class="admin-input" type="text" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pf-desc">Description</label>
+            <textarea id="pf-desc" class="admin-input admin-input--desc" name="description" rows="5"></textarea>
+          </div>
+        </div>
+
+        <div class="dialog-col dialog-col-lists">
+          <div class="field">
+            <label>Images</label>
+            <div id="pf-images-list" class="list-editor"></div>
+            <button type="button" id="btn-add-image" class="btn-add-row">+ Add image URL</button>
+          </div>
+          <div class="field">
+            <label>Dimensions / specs</label>
+            <div id="pf-dimensions-list" class="list-editor"></div>
+            <button type="button" id="btn-add-dimension" class="btn-add-row">+ Add line</button>
+          </div>
+          <div class="field">
+            <label>Variants</label>
+            <div id="pf-variants-list" class="list-editor"></div>
+            <button type="button" id="btn-add-variant" class="btn-add-row">+ Add variant</button>
+          </div>
+        </div>
+
+        <aside class="dialog-col dialog-col-preview">
+          <div class="preview-panel-label">Storefront card</div>
+          <div id="product-preview-card" class="product-card" data-admin-live-preview>
+            <div id="preview-gallery-mount"></div>
+            <div class="card-body">
+              <div id="preview-chips" class="product-chips" aria-label="Product tags" hidden></div>
+              <div id="preview-sku" class="product-code">SKU</div>
+              <div id="preview-name" class="product-name">Product name</div>
+              <div id="preview-desc"></div>
+              <div id="preview-specs"></div>
+              <div id="preview-variant-slot"></div>
+              <div class="card-footer">
+                <div id="preview-price" class="product-price" data-role="price">—</div>
+                <button type="button" class="add-cart-btn" tabindex="-1">কার্টে যোগ করুন</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-cancel-product" class="btn-ghost">Cancel</button>
+      <button type="submit" class="btn-primary" id="btn-save-product">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="shopcraft-supabase-config.js"></script>
+<script src="admin-secrets.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
