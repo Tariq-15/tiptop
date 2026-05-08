@@ -7,17 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared.css">
-<link rel="stylesheet" href="mod.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../mod.css">
 </head>
 <body class="page-category page-mod">
-<script>window.SHOPCRAFT_MOD_CATALOG = true;</script>
+<script>
+window.SHOPCRAFT_MOD_CATALOG = true;
+window.SHOPCRAFT_CATEGORY_LINK_BASE = "";
+window.SHOPCRAFT_MOD_INDEX_HREF = "../index.html";
+</script>
 
 <header>
   <div class="header-inner">
-    <a href="index.html" class="logo">
+    <a href="../index.html" class="logo">
       <div class="logo-icon">
-        <img src="../TipTop%20Logo.jpg" alt="TipTop logo">
+        <img src="../../TipTop%20Logo.jpg" alt="TipTop logo">
       </div>
       <span class="logo-text">Tip<span>Top</span></span>
     </a>
@@ -31,7 +35,7 @@
           <div id="nav-more-menu" class="nav-more-menu" role="menu" aria-label="More categories"></div>
         </div>
       </div>
-      <a href="../index.html" class="storefront-link">← Public catalog</a>
+      <a href="../../index.html" class="storefront-link">← Public catalog</a>
     </nav>
   </div>
 </header>
@@ -39,7 +43,7 @@
 <div class="page-hero">
   <div class="page-hero-inner">
     <div class="breadcrumb">
-      <a href="index.html">Moderator home</a> › <span id="catalog-breadcrumb-current">…</span>
+      <a href="../index.html">Moderator home</a> › <span id="catalog-breadcrumb-current">…</span>
     </div>
     <h1 class="page-title" id="catalog-page-title">Loading…</h1>
     <p class="page-subtitle" id="catalog-page-subtitle"></p>
@@ -59,14 +63,14 @@
   <div class="footer-simple">
     <span class="logo-text">Tip<span style="color:#93c5fd">Top</span></span>
     <p>Copy product messages to clipboard — same catalog as the public site.</p>
-    <a href="../index.html" class="footer-messenger-btn mod-footer-link">← Customer storefront</a>
+    <a href="../../index.html" class="footer-messenger-btn mod-footer-link">← Customer storefront</a>
     <p class="footer-copy">Moderator · TipTop</p>
   </div>
 </footer>
 
-<script src="../shopcraft-supabase-config.js"></script>
-<script src="../shopcraft-api.js"></script>
-<script src="../site-nav-categories.js" defer></script>
-<script src="../catalog-cart.js" defer></script>
+<script src="../../shopcraft-supabase-config.js"></script>
+<script src="../../shopcraft-api.js"></script>
+<script src="../../site-nav-categories.js" defer></script>
+<script src="../../catalog-cart.js" defer></script>
 </body>
 </html>

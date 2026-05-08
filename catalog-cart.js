@@ -1000,8 +1000,16 @@
             subtitle: "চালিয়ে যেতে হোম থেকে একটি কালেকশন বেছে নিন।",
             documentTitle: "Categories",
           });
+          var homeHref =
+            isModCatalog() &&
+            typeof window.SHOPCRAFT_MOD_INDEX_HREF === "string" &&
+            window.SHOPCRAFT_MOD_INDEX_HREF.length
+              ? window.SHOPCRAFT_MOD_INDEX_HREF
+              : "index.html";
           grid.innerHTML =
-            '<p class="catalog-empty"><a href="index.html">← হোমে ফিরে ক্যাটাগরি বেছে নিন</a></p>';
+            '<p class="catalog-empty"><a href="' +
+            homeHref +
+            '">← হোমে ফিরে ক্যাটাগরি বেছে নিন</a></p>';
           pagination.innerHTML = "";
           updatePageMeta(0, []);
           return;

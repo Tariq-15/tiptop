@@ -147,6 +147,17 @@
     messengerBtn = document.querySelector(".nav-shell .messenger-btn");
   }
 
+  /** Relative listing URL; default category.html; mod home sets category/; mod category page sets "". */
+  function categoryListingHref(slug) {
+    var base =
+      typeof window.SHOPCRAFT_CATEGORY_LINK_BASE === "string"
+        ? window.SHOPCRAFT_CATEGORY_LINK_BASE
+        : "category.html";
+    var q = "?c=" + encodeURIComponent(slug);
+    if (base === "" || base === ".") return q;
+    return base + q;
+  }
+
   /**
    * @param {Array} defs category payloads (already filtered by listOnHomepage where needed)
    */
@@ -162,7 +173,7 @@
     defs.forEach(function (c) {
       if (c.showInNav === false) return;
       var a = document.createElement("a");
-      a.href = "category.html?c=" + encodeURIComponent(c.slug);
+      a.href = categoryListingHref(c.slug);
       a.textContent = c.navLabel || c.breadcrumbLabel || c.slug;
       a.className = "nav-link";
       navMount.appendChild(a);

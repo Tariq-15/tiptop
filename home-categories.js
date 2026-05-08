@@ -65,6 +65,16 @@
     return Promise.reject(new Error("supabase_not_configured"));
   }
 
+  function categoryListingHref(slug) {
+    var base =
+      typeof window.SHOPCRAFT_CATEGORY_LINK_BASE === "string"
+        ? window.SHOPCRAFT_CATEGORY_LINK_BASE
+        : "category.html";
+    var q = "?c=" + encodeURIComponent(slug);
+    if (base === "" || base === ".") return q;
+    return base + q;
+  }
+
   Promise.all([fetchCategoriesDoc(), fetchProductsDoc()])
     .then(function (pair) {
       var catDoc = pair[0];
@@ -81,7 +91,7 @@
       defs.forEach(function (c) {
         if (c.showInNav === false || !footerMount) return;
         var a = document.createElement("a");
-        a.href = "category.html?c=" + encodeURIComponent(c.slug);
+        a.href = categoryListingHref(c.slug);
         a.textContent = c.navLabel || c.breadcrumbLabel || c.slug;
         footerMount.appendChild(a);
       });
@@ -111,8 +121,8 @@
               emoji +
               "</div>";
           return (
-            '<a href="category.html?c=' +
-            encodeURIComponent(c.slug) +
+            '<a href="' +
+            categoryListingHref(c.slug) +
             '" class="category-card">' +
             heroVisual +
             '<div class="category-body">' +
