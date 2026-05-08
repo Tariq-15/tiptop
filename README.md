@@ -15,12 +15,11 @@ Setup and security: **[ADMIN.md](./ADMIN.md)**.
 
 ## Deploy (Vercel)
 
-This repo is a **static HTML** site at the root. **Next.js only exists under `drive-proxy/`** (optional local image proxy), so the storefront project must not use Vercel’s **Next.js** preset.
+This repo is a **static HTML** site at the root. **Next.js only exists under `drive-proxy/`** (optional local image proxy). Vercel was detecting that subfolder and treating the project as Next.js; **`vercel.json` sets `"framework": null`** (same as the **Other** preset), and **`.vercelignore`** skips `drive-proxy` for this deployment.
 
 1. **Import** this GitHub repo in Vercel.
-2. **Framework Preset:** **Other** (or leave defaults that match `vercel.json`).
-3. **Root Directory:** `.` (repository root, **not** `drive-proxy`).
-4. **Build Command:** `npm run build` — **Output Directory:** `.`  
-   These are set in **`vercel.json`** at the repo root.
+2. **Root Directory:** leave **empty** (repo root, **not** `drive-proxy`).
+3. **Framework Preset:** should become **Other** once `vercel.json` is picked up; if the dashboard still shows Next.js, open **Settings → General → Framework Preset** and set **Other**, then redeploy.
+4. **Build / Output:** use **`vercel.json`** (`npm run build`, output `.`).
 
 To deploy the **drive proxy** as its own app: create a second Vercel project with **Root Directory** `drive-proxy` and framework **Next.js**.
