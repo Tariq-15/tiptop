@@ -6,7 +6,7 @@
  */
 (function () {
   var STORAGE_KEY = "shopcraft_cart_v1";
-  var MESSENGER_BASE = "https://m.me/YOUR_PAGE_USERNAME";
+  var MESSENGER_BASE = "https://m.me/tiptopcc99";
   var PER_PAGE = 16;
 
   /** If category metadata is missing, map ?c= slug → product category label. */

@@ -24,6 +24,33 @@
     return skus[0] + " – " + skus[skus.length - 1];
   }
 
+  function extractGoogleDriveFileId(url) {
+    if (!url || typeof url !== "string") return null;
+    var u = url.trim();
+    var m = u.match(/[?&]id=([^&]+)/);
+    if (m) return decodeURIComponent(m[1]);
+    m = u.match(/\/file\/d\/([^/?#]+)/);
+    if (m) return m[1];
+    m = u.match(/\/d\/([^/?#]+)/);
+    if (m && u.indexOf("drive.google") !== -1) return m[1];
+    m = u.match(/googleusercontent\.com\/d\/([^/?#]+)/);
+    if (m) return m[1];
+    return null;
+  }
+
+  function cardImageDisplayUrl(raw) {
+    var t = String(raw || "").trim();
+    if (!t) return "";
+    var id = extractGoogleDriveFileId(t);
+    if (id) {
+      return (
+        "https://drive.google.com/thumbnail?id=" + encodeURIComponent(id) + "&sz=w1200"
+      );
+    }
+    if (/^https?:\/\//i.test(t)) return t;
+    return "";
+  }
+
   function fetchCategoriesDoc() {
     if (typeof ShopcraftApi !== "undefined" && ShopcraftApi.supabaseActive()) {
       return ShopcraftApi.fetchCategoriesJson();
@@ -70,15 +97,24 @@
             list.length + " Products · " + skuRangeLabel(list);
           var emoji = c.cardEmoji || "📦";
           var grad = c.cardGradient || "linear-gradient(135deg, #f5f2ec 0%, #e8e4dc 100%)";
+          var imageRaw = c.cardImage || c.thumbnailImage || c.image || "";
+          var imageUrl = cardImageDisplayUrl(imageRaw);
+          var heroVisual = imageUrl
+            ? '<img class="category-img" src="' +
+              escapeHtml(imageUrl) +
+              '" alt="' +
+              escapeHtml(c.breadcrumbLabel || c.pageTitle || c.slug || "Category") +
+              '">'
+            : '<div class="category-img-placeholder" style="background:' +
+              escapeHtml(grad) +
+              '">' +
+              emoji +
+              "</div>";
           return (
             '<a href="category.html?c=' +
             encodeURIComponent(c.slug) +
             '" class="category-card">' +
-            '<div class="category-img-placeholder" style="background:' +
-            escapeHtml(grad) +
-            '">' +
-            emoji +
-            "</div>" +
+            heroVisual +
             '<div class="category-body">' +
             "<div>" +
             '<div class="category-name">' +
@@ -99,9 +135,7 @@
 
       if (heroBlurb) {
         heroBlurb.textContent =
-          "Browse our hand-picked collection across " +
-          defs.length +
-          " categories. Order directly via Facebook Messenger.";
+          "Browse our hand-picked collection. Order directly via Facebook Messenger.";
       }
     })
     .catch(function () {

@@ -536,6 +536,7 @@
       .map(function (row, idx) {
         var p = row.payload || {};
         var label = p.navLabel || p.breadcrumbLabel || row.slug;
+        var img = String(p.cardImage || p.thumbnailImage || p.image || "").trim();
         return (
           '<li class="cat-sort-item" draggable="true" data-slug="' +
           escapeHtml(row.slug) +
@@ -543,12 +544,29 @@
           idx +
           '">' +
           '<span class="cat-sort-grip">⋮⋮</span>' +
+          '<div class="cat-sort-fields">' +
+          '<div class="cat-sort-top">' +
           '<span class="cat-sort-label">' +
           escapeHtml(label) +
           "</span>" +
           '<span class="cat-sort-meta">' +
           escapeHtml(row.slug) +
-          "</span></li>"
+          "</span>" +
+          "</div>" +
+          '<div class="cat-field-row">' +
+          '<input class="admin-input cat-input cat-name-input" type="text" data-slug="' +
+          escapeHtml(row.slug) +
+          '" value="' +
+          escapeHtml(label) +
+          '" placeholder="Category name">' +
+          '<input class="admin-input cat-input cat-image-input" type="url" data-slug="' +
+          escapeHtml(row.slug) +
+          '" value="' +
+          escapeHtml(img) +
+          '" placeholder="Square image URL (Drive / https)">' +
+          "</div>" +
+          '<div class="cat-help">Name updates nav + page title labels. Image URL is used on homepage category cards.</div>' +
+          "</div></li>"
         );
       })
       .join("");
@@ -598,28 +616,41 @@
 
   async function persistCategoryOrder() {
     if (!requireWriteAccess()) return;
-    var order = []
-      .slice.call($("category-sort-list").querySelectorAll(".cat-sort-item"))
-      .map(function (li) {
-        return li.getAttribute("data-slug");
-      });
+    var rows = [].slice.call($("category-sort-list").querySelectorAll(".cat-sort-item"));
     try {
-      for (var i = 0; i < order.length; i++) {
-        var slug = order[i];
+      for (var i = 0; i < rows.length; i++) {
+        var li = rows[i];
+        var slug = li.getAttribute("data-slug");
+        if (!slug) continue;
+        var original = state.categories.find(function (x) {
+          return x.slug === slug;
+        }) || { payload: {} };
+        var payload = Object.assign({}, original.payload || {});
+        var nameInput = li.querySelector(".cat-name-input");
+        var imageInput = li.querySelector(".cat-image-input");
+        var newLabel = nameInput ? String(nameInput.value || "").trim() : "";
+        var newImage = imageInput ? String(imageInput.value || "").trim() : "";
+        if (newLabel) {
+          payload.navLabel = newLabel;
+          payload.breadcrumbLabel = newLabel;
+          payload.pageTitle = newLabel;
+          payload.documentTitle = newLabel;
+        }
+        payload.cardImage = newImage ? normalizeImageUrlForStorage(newImage) : "";
         var r = await api("/rest/v1/categories?slug=eq." + encodeURIComponent(slug), {
           method: "PATCH",
           headersExtra: {
             "Content-Type": "application/json",
             Prefer: "return=minimal",
           },
-          body: JSON.stringify({ sort_order: i }),
+          body: JSON.stringify({ sort_order: i, payload: payload }),
         });
         if (!r.ok) {
           toast(await r.text(), true);
           return;
         }
       }
-      toast("Category order saved.");
+      toast("Categories updated.");
       await loadAll();
     } catch (err) {
       toast(err.message || String(err), true);
