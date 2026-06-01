@@ -512,6 +512,17 @@
     });
   }
 
+  function slugifyCategory(s) {
+    return (
+      String(s || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 64) || "category"
+    );
+  }
+
   function categoryOptionValues() {
     var seen = [];
     state.categories.forEach(function (row) {
@@ -526,6 +537,30 @@
     return seen.sort();
   }
 
+  function syncProductCategoryCustomField() {
+    var sel = $("pf-category");
+    var custom = $("pf-category-custom");
+    if (!sel || !custom) return;
+    var isNew = sel.value === "__new__";
+    custom.hidden = !isNew;
+    custom.required = isNew;
+    if (isNew) {
+      try {
+        custom.focus();
+      } catch (_) {}
+    }
+  }
+
+  function readProductFormCategory() {
+    var sel = $("pf-category");
+    if (!sel) return "";
+    if (sel.value === "__new__") {
+      var custom = $("pf-category-custom");
+      return custom ? String(custom.value || "").trim() : "";
+    }
+    return String(sel.value || "").trim();
+  }
+
   function renderCategoryList() {
     var ul = $("category-sort-list");
     if (!ul) return;
@@ -536,6 +571,7 @@
       .map(function (row, idx) {
         var p = row.payload || {};
         var label = p.navLabel || p.breadcrumbLabel || row.slug;
+        var productCat = String(p.productCategory || "").trim();
         var img = String(p.cardImage || p.thumbnailImage || p.image || "").trim();
         return (
           '<li class="cat-sort-item" draggable="true" data-slug="' +
@@ -565,7 +601,14 @@
           escapeHtml(img) +
           '" placeholder="Square image URL (Drive / https)">' +
           "</div>" +
-          '<div class="cat-help">Name updates nav + page title labels. Image URL is used on homepage category cards.</div>' +
+          '<div class="cat-field-row">' +
+          '<input class="admin-input cat-input cat-product-category-input" type="text" data-slug="' +
+          escapeHtml(row.slug) +
+          '" value="' +
+          escapeHtml(productCat) +
+          '" placeholder="Product category label (for products)">' +
+          "</div>" +
+          '<div class="cat-help">Name updates nav + page title labels. Product category label appears in the product editor. Image URL is used on homepage category cards.</div>' +
           "</div></li>"
         );
       })
@@ -628,14 +671,20 @@
         var payload = Object.assign({}, original.payload || {});
         var nameInput = li.querySelector(".cat-name-input");
         var imageInput = li.querySelector(".cat-image-input");
+        var productCatInput = li.querySelector(".cat-product-category-input");
         var newLabel = nameInput ? String(nameInput.value || "").trim() : "";
         var newImage = imageInput ? String(imageInput.value || "").trim() : "";
+        var newProductCat = productCatInput
+          ? String(productCatInput.value || "").trim()
+          : "";
         if (newLabel) {
           payload.navLabel = newLabel;
           payload.breadcrumbLabel = newLabel;
           payload.pageTitle = newLabel;
           payload.documentTitle = newLabel;
         }
+        if (newProductCat) payload.productCategory = newProductCat;
+        payload.slug = slug;
         payload.cardImage = newImage ? normalizeImageUrlForStorage(newImage) : "";
         var r = await api("/rest/v1/categories?slug=eq." + encodeURIComponent(slug), {
           method: "PATCH",
@@ -651,6 +700,72 @@
         }
       }
       toast("Categories updated.");
+      await loadAll();
+    } catch (err) {
+      toast(err.message || String(err), true);
+    }
+  }
+
+  async function createCategoryFromForm() {
+    if (!requireWriteAccess()) return;
+    var nameEl = $("cat-add-name");
+    var slugEl = $("cat-add-slug");
+    var pcEl = $("cat-add-product-category");
+    var imgEl = $("cat-add-image");
+    var name = nameEl ? String(nameEl.value || "").trim() : "";
+    if (!name) {
+      toast("Enter a display name.", true);
+      if (nameEl) nameEl.focus();
+      return;
+    }
+    var slugRaw = slugEl ? String(slugEl.value || "").trim() : "";
+    var slug = slugifyCategory(slugRaw || name);
+    if (
+      state.categories.some(function (x) {
+        return x.slug === slug;
+      })
+    ) {
+      toast("A category with slug “" + slug + "” already exists.", true);
+      return;
+    }
+    var productCategory = pcEl ? String(pcEl.value || "").trim() : "";
+    if (!productCategory) productCategory = name;
+    var imageRaw = imgEl ? String(imgEl.value || "").trim() : "";
+    var sortOrder = state.categories.length;
+    var payload = {
+      slug: slug,
+      navLabel: name,
+      breadcrumbLabel: name,
+      pageTitle: name,
+      documentTitle: name + " — TipTop",
+      productCategory: productCategory,
+      listOnHomepage: true,
+      cardImage: imageRaw ? normalizeImageUrlForStorage(imageRaw) : "",
+      cardEmoji: "📦",
+      cardGradient: "linear-gradient(135deg, #f5f2ec 0%, #e8e4dc 100%)",
+    };
+    try {
+      var r = await api("/rest/v1/categories", {
+        method: "POST",
+        headersExtra: {
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
+          slug: slug,
+          sort_order: sortOrder,
+          payload: payload,
+        }),
+      });
+      if (!r.ok) {
+        toast(await r.text(), true);
+        return;
+      }
+      toast("Category added.");
+      if (nameEl) nameEl.value = "";
+      if (slugEl) slugEl.value = "";
+      if (pcEl) pcEl.value = "";
+      if (imgEl) imgEl.value = "";
       await loadAll();
     } catch (err) {
       toast(err.message || String(err), true);
@@ -1036,12 +1151,36 @@
       if (vals.indexOf(curF) !== -1) selF.value = curF;
     }
     if (selForm) {
-      selForm.innerHTML = vals
-        .map(function (v) {
-          return '<option value="' + escapeHtml(v) + '">' + escapeHtml(v) + "</option>";
-        })
-        .join("");
-      if (vals.indexOf(curForm) !== -1) selForm.value = curForm;
+      var opts = vals.length
+        ? vals
+            .map(function (v) {
+              return (
+                '<option value="' + escapeHtml(v) + '">' + escapeHtml(v) + "</option>"
+              );
+            })
+            .join("")
+        : '<option value="" disabled selected>Select or add a category</option>';
+      selForm.innerHTML =
+        opts +
+        '<option value="__new__">+ New category…</option>';
+      if (curForm === "__new__") {
+        selForm.value = "__new__";
+      } else if (vals.indexOf(curForm) !== -1) {
+        selForm.value = curForm;
+      } else if (curForm && vals.length) {
+        selForm.innerHTML =
+          '<option value="' +
+          escapeHtml(curForm) +
+          '">' +
+          escapeHtml(curForm) +
+          "</option>" +
+          opts +
+          '<option value="__new__">+ New category…</option>';
+        selForm.value = curForm;
+      } else if (vals.length === 1) {
+        selForm.value = vals[0];
+      }
+      syncProductCategoryCustomField();
     }
   }
 
@@ -1086,12 +1225,29 @@
     }
 
     fillCategorySelects();
+    if ($("pf-category-custom")) $("pf-category-custom").value = "";
     if (isEdit) {
       var p2 = state.products.find(function (x) {
         return Number(x.id) === Number(id);
       });
-      if (p2 && p2.category && $("pf-category")) $("pf-category").value = p2.category;
+      if (p2 && p2.category && $("pf-category")) {
+        var catSel = $("pf-category");
+        var catVals = categoryOptionValues();
+        if (catVals.indexOf(p2.category) !== -1) {
+          catSel.value = p2.category;
+        } else {
+          catSel.innerHTML =
+            '<option value="' +
+            escapeHtml(p2.category) +
+            '">' +
+            escapeHtml(p2.category) +
+            "</option>" +
+            catSel.innerHTML;
+          catSel.value = p2.category;
+        }
+      }
     }
+    syncProductCategoryCustomField();
 
     dlg.showModal();
     scheduleProductPreview();
@@ -1125,10 +1281,21 @@
       return;
     }
 
+    var categoryVal = readProductFormCategory();
+    if (!categoryVal) {
+      toast("Choose a category or enter a new product category label.", true);
+      if ($("pf-category") && $("pf-category").value === "__new__" && $("pf-category-custom")) {
+        $("pf-category-custom").focus();
+      } else if ($("pf-category")) {
+        $("pf-category").focus();
+      }
+      return;
+    }
+
     var row = {
       sku: $("pf-sku").value.trim(),
       name: $("pf-name").value.trim(),
-      category: ($("pf-category") && $("pf-category").value) || "",
+      category: categoryVal,
       description: $("pf-desc").value,
       message_text: $("pf-message-text")
         ? String($("pf-message-text").value).trim()
@@ -1329,6 +1496,17 @@
     bindAdminPreviewInteractions();
 
     $("btn-save-categories").addEventListener("click", persistCategoryOrder);
+    if ($("btn-add-category"))
+      $("btn-add-category").addEventListener("click", createCategoryFromForm);
+    if ($("cat-add-name") && $("cat-add-slug")) {
+      $("cat-add-name").addEventListener("input", function () {
+        if (String($("cat-add-slug").value || "").trim()) return;
+        $("cat-add-slug").placeholder = slugifyCategory($("cat-add-name").value) || "auto from name";
+      });
+    }
+    if ($("pf-category")) {
+      $("pf-category").addEventListener("change", syncProductCategoryCustomField);
+    }
     $("btn-add-product").addEventListener("click", function () {
       openProductForm(null);
     });
